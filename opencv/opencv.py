@@ -68,6 +68,7 @@ cv2.putText(output, text, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
 cv2.imshow("Contours", output)
 cv2.waitKey(0)
 
+
 # a typical operation we may want to apply is to take our mask and
 # apply a bitwise AND to our input image, keeping only the masked
 # regions
