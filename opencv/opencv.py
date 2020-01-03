@@ -1,6 +1,3 @@
-# USAGE
-# python opencv_tutorial_02.py --image tetris_blocks.png
-
 # import the necessary packages
 import argparse
 import imutils
@@ -21,38 +18,26 @@ cv2.waitKey(0)
 
 # convert the image to grayscale
 thresh = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-cv2.imshow("Gray", thresh)
-cv2.waitKey(0)
-
-# threshold the image by setting all pixel values less than 225
-# to 255 (white; foreground) and all pixel values >= 225 to 255
-# (black; background), thereby segmenting the image
-
-# thresh = cv2.GaussianBlur(gray, (11, 11), 0)
-# for i in range(6):
-#     thresh = cv2.GaussianBlur(thresh, (11, 11), 0)
 
 # applying edge detection we can find the outlines of objects in
 # images
 edged = cv2.Canny(thresh, 50, 150, apertureSize=3)
-cv2.imshow("Edged", edged)
-cv2.waitKey(0)
 
-
-minLineLength = 400
+minLineLength = 100
 maxLineGap = 10
-lines = cv2.HoughLinesP(edged,1,np.pi/180,100,minLineLength,maxLineGap)
+lines = cv2.HoughLinesP(edged, 1, np.pi / 180, 100, minLineLength, maxLineGap)
 for i in lines:
-    for x1,y1,x2,y2 in i:
-        cv2.line(thresh,(x1,y1),(x2,y2),(255,255,0),2)
-# thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, se)
-# cv2.imwrite('houghlines.jpg', gray)
+    for x1, y1, x2, y2 in i:
+        cv2.line(thresh, (x1, y1), (x2, y2), (255, 255, 0), 2)
 cv2.imshow('img', thresh)
 cv2.waitKey(0)
+
+thresh = cv2.GaussianBlur(thresh,(11,11),0)
 
 thresh = cv2.threshold(thresh, 225, 255, cv2.THRESH_BINARY_INV)[1]
 cv2.imshow("Thresh", thresh)
 cv2.waitKey(0)
+
 
 # similarly, dilations can increase the size of the ground objects
 thresh = thresh.copy()
@@ -72,26 +57,15 @@ for c in cnts:
     # draw each contour on the output image with a 3px thick purple
     # outline, then display the output contours one at a time
     cv2.drawContours(output, [c], -1, (240, 0, 159), 3)
-    cv2.imshow("Contours", output)
-    cv2.waitKey(0)
+
+cv2.imshow("Contours", output)
+cv2.waitKey(0)
 
 # draw the total number of contours found in purple
 text = "I found {} objects!".format(len(cnts))
 cv2.putText(output, text, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7,
             (240, 0, 159), 2)
 cv2.imshow("Contours", output)
-cv2.waitKey(0)
-
-# we apply erosions to reduce the size of foreground objects
-mask = thresh.copy()
-mask = cv2.erode(mask, None, iterations=5)
-cv2.imshow("Eroded", mask)
-cv2.waitKey(0)
-
-# similarly, dilations can increase the size of the ground objects
-mask = thresh.copy()
-mask = cv2.dilate(mask, None, iterations=5)
-cv2.imshow("Dilated", mask)
 cv2.waitKey(0)
 
 # a typical operation we may want to apply is to take our mask and
